@@ -18,7 +18,6 @@ function NameEntry({ aeName, setAeName, onSubmit, loading }) {
   return (
     <div className="name-entry">
       <div className="name-entry-card">
-        <div className="name-entry-icon">✍️</div>
         <h1>H1 FY27 QBR Planning</h1>
         <p>
           Enter your name to load or start your plan. Your progress auto-saves as you type — you can return anytime.
@@ -32,7 +31,7 @@ function NameEntry({ aeName, setAeName, onSubmit, loading }) {
             onKeyDown={handleKey}
             placeholder="Your full name (e.g. Sarah Chen)"
             autoFocus
-            style={{ textAlign: 'center', fontSize: 15 }}
+            style={{ textAlign: 'center' }}
           />
           <button
             className="btn btn-primary btn-lg"
@@ -43,7 +42,7 @@ function NameEntry({ aeName, setAeName, onSubmit, loading }) {
             {loading ? (
               <><span className="spinner" /> Loading…</>
             ) : (
-              'Start My Plan →'
+              'Start My Plan'
             )}
           </button>
         </div>
@@ -84,40 +83,40 @@ export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, 
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          marginBottom: 20,
-          padding: '12px 20px',
-          background: 'var(--bg-2)',
+          marginBottom: 16,
+          padding: '10px 16px',
+          background: 'var(--bg-0)',
           border: '1px solid var(--border-1)',
           borderRadius: 'var(--radius-md)'
         }}
       >
         <div
           style={{
-            width: 36,
-            height: 36,
+            width: 32,
+            height: 32,
             borderRadius: '50%',
-            background: 'var(--accent-dim)',
-            border: '1px solid rgba(43,122,61,0.3)',
+            background: 'var(--accent-light)',
+            border: '1px solid var(--accent-mid)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 700,
-            color: 'var(--accent-text)',
+            color: 'var(--accent)',
             flexShrink: 0
           }}
         >
           {initials}
         </div>
         <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-0)' }}>{aeName}</div>
+          <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-0)' }}>{aeName}</div>
           <div style={{ fontSize: 11, color: 'var(--text-3)' }}>H1 FY27 Plan · Auto-saving</div>
         </div>
         <div style={{ flex: 1 }} />
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => window.location.reload()}
-          style={{ fontSize: 12, color: 'var(--text-3)' }}
+          style={{ fontSize: 12 }}
         >
           Switch AE
         </button>
@@ -171,9 +170,9 @@ export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, 
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          marginTop: 28,
+          marginTop: 24,
           paddingTop: 20,
-          borderTop: '1px solid var(--border-0)'
+          borderTop: '1px solid var(--border-1)'
         }}
       >
         <button
@@ -181,17 +180,17 @@ export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, 
           onClick={() => setActiveSection(s => Math.max(0, s - 1))}
           disabled={activeSection === 0}
         >
-          ← Previous
+          Previous
         </button>
         <span style={{ fontSize: 12, color: 'var(--text-3)', alignSelf: 'center' }}>
-          Section {activeSection + 1} of {SECTIONS.length}
+          {activeSection + 1} / {SECTIONS.length}
         </span>
         <button
           className="btn btn-primary"
           onClick={() => setActiveSection(s => Math.min(SECTIONS.length - 1, s + 1))}
           disabled={activeSection === SECTIONS.length - 1}
         >
-          Next Section →
+          Next Section
         </button>
       </div>
     </div>

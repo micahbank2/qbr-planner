@@ -77,7 +77,7 @@ function AEDetail({ ae }) {
           <div className="ae-detail-meta">Last updated: {lastUpdated}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--accent-text)' }}>{overall}%</div>
+          <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--accent)' }}>{overall}%</div>
           <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>Plan complete</div>
         </div>
       </div>
@@ -171,8 +171,8 @@ export default function ManagerView({ allAEs, loading, onRefresh }) {
   if (loading) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">⏳</div>
-        <h3>Loading plans…</h3>
+        <div className="spinner" style={{ width: 20, height: 20, margin: '0 auto 16px' }} />
+        <h3>Loading plans</h3>
         <p>Fetching all AE submissions from Firestore.</p>
       </div>
     )
@@ -186,10 +186,9 @@ export default function ManagerView({ allAEs, loading, onRefresh }) {
             <h2>Manager View</h2>
             <p>All submitted AE plans will appear here.</p>
           </div>
-          <button className="btn btn-outline" onClick={onRefresh}>↻ Refresh</button>
+          <button className="btn btn-outline" onClick={onRefresh}>Refresh</button>
         </div>
         <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
           <h3>No plans submitted yet</h3>
           <p>AEs can submit their plans using the AE view. Check back once submissions come in.</p>
         </div>
@@ -206,7 +205,7 @@ export default function ManagerView({ allAEs, loading, onRefresh }) {
           <h2>Manager View</h2>
           <p>{allAEs.length} AE plan{allAEs.length !== 1 ? 's' : ''} submitted</p>
         </div>
-        <button className="btn btn-outline" onClick={onRefresh}>↻ Refresh</button>
+        <button className="btn btn-outline" onClick={onRefresh}>Refresh</button>
       </div>
 
       <div className="manager-layout">
@@ -225,7 +224,7 @@ export default function ManagerView({ allAEs, loading, onRefresh }) {
                 <div className="ae-avatar">{initials}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="ae-sidebar-name">{ae.name}</div>
-                  <div style={{ fontSize: 11, color: i === selectedIdx ? 'var(--accent-text)' : 'var(--text-3)', marginTop: 2 }}>
+                  <div style={{ fontSize: 11, color: i === selectedIdx ? 'var(--accent)' : 'var(--text-3)', marginTop: 2 }}>
                     {overall}% complete
                   </div>
                 </div>

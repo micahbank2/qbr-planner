@@ -4,10 +4,7 @@ export default function Section2({ data, onChange }) {
   return (
     <div className="section-card">
       <div className="section-card-header">
-        <div className="section-card-title">
-          <div className="section-card-icon">📖</div>
-          Your Story
-        </div>
+        <div className="section-card-title">Your Story</div>
         <div className="section-card-subtitle">
           Craft the narrative that anchors your H1. Make it specific, honest, and compelling.
         </div>

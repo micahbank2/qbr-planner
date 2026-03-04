@@ -29,10 +29,7 @@ export default function Section1({ data, onChange }) {
       {/* ── Card 1: Target & Net New Pipeline ── */}
       <div className="section-card">
         <div className="section-card-header">
-          <div className="section-card-title">
-            <div className="section-card-icon">🎯</div>
-            Target & Net New Pipeline
-          </div>
+          <div className="section-card-title">Target & Net New Pipeline</div>
           <div className="section-card-subtitle">Set your H1 number and articulate how you'll build the pipe to get there.</div>
         </div>
 
@@ -120,10 +117,7 @@ export default function Section1({ data, onChange }) {
       {/* ── Card 2: Account Tables ── */}
       <div className="section-card">
         <div className="section-card-header">
-          <div className="section-card-title">
-            <div className="section-card-icon">🏢</div>
-            Account Opportunities
-          </div>
+          <div className="section-card-title">Account Opportunities</div>
           <div className="section-card-subtitle">Map your highest-potential new logo and whitespace opportunities.</div>
         </div>
 
@@ -149,10 +143,7 @@ export default function Section1({ data, onChange }) {
       {/* ── Card 3: Retention ── */}
       <div className="section-card">
         <div className="section-card-header">
-          <div className="section-card-title">
-            <div className="section-card-icon">🔒</div>
-            Retention
-          </div>
+          <div className="section-card-title">Retention</div>
           <div className="section-card-subtitle">Protect and grow your base — what's at stake and how you'll defend it.</div>
         </div>
 
@@ -246,12 +237,9 @@ export default function Section1({ data, onChange }) {
       {/* ── Card 4: Q1 Fast Start ── */}
       <div className="section-card">
         <div className="section-card-header">
-          <div className="section-card-title">
-            <div className="section-card-icon">⚡</div>
-            Q1 Fast Start
-          </div>
+          <div className="section-card-title">Q1 Fast Start</div>
           <div className="section-card-subtitle">
-            Your top 3 concrete actions to lock in momentum by <strong style={{ color: 'var(--accent-text)' }}>April 30</strong>.
+            Your top 3 concrete actions to lock in momentum by <strong style={{ color: 'var(--accent)' }}>April 30</strong>.
           </div>
         </div>
 

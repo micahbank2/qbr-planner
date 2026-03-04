@@ -128,7 +128,7 @@ export default function App() {
           </div>
           <div className="header-actions">
             {saveStatus === 'saving' && <span className="save-status saving">Saving…</span>}
-            {saveStatus === 'saved' && <span className="save-status saved">✓ Saved</span>}
+            {saveStatus === 'saved' && <span className="save-status saved">Saved</span>}
             {saveStatus === 'error' && <span className="save-status error">Save failed</span>}
             <button
               className="btn btn-outline btn-sm"
