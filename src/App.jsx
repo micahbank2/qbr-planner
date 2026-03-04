@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { doc, setDoc, getDoc, serverTimestamp, collection, getDocs } from 'firebase/firestore'
+import { doc, setDoc, serverTimestamp, collection, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase'
 import AEView from './components/AEView'
 import ManagerView from './components/ManagerView'
+import PresenterView from './components/PresenterView'
 
 const initialData = {
   section1: {
@@ -49,13 +50,52 @@ export default function App() {
   const [formData, setFormData] = useState(initialData)
   const [saveStatus, setSaveStatus] = useState('idle')
   const [allAEs, setAllAEs] = useState([])
-  const [loadingName, setLoadingName] = useState(false)
   const [managerLoading, setManagerLoading] = useState(false)
   const saveTimerRef = useRef(null)
+  const skipSnapshotRef = useRef(false)
+  const formDataRef = useRef(formData)
+  formDataRef.current = formData
 
+  // ── Real-time AE data listener ──────────────────────────────────────────
+  useEffect(() => {
+    if (!nameSubmitted || !aeName) return
+    const docRef = doc(db, 'ae-plans', aeName.trim())
+    const unsub = onSnapshot(docRef, (snap) => {
+      // Skip snapshots triggered by our own saves
+      if (skipSnapshotRef.current) {
+        skipSnapshotRef.current = false
+        return
+      }
+      if (snap.exists()) {
+        const { name: _n, lastUpdated: _l, ...rest } = snap.data()
+        setFormData(deepMerge(initialData, rest))
+      }
+    }, (err) => {
+      console.error('Snapshot error:', err)
+    })
+    return () => unsub()
+  }, [nameSubmitted, aeName])
+
+  // ── Real-time manager listener ──────────────────────────────────────────
+  useEffect(() => {
+    if (view !== 'manager') return
+    setManagerLoading(true)
+    const unsub = onSnapshot(collection(db, 'ae-plans'), (snapshot) => {
+      const data = snapshot.docs.map(d => d.data())
+      setAllAEs(data.sort((a, b) => (a.name || '').localeCompare(b.name || '')))
+      setManagerLoading(false)
+    }, (err) => {
+      console.error('Manager listener error:', err)
+      setManagerLoading(false)
+    })
+    return () => unsub()
+  }, [view])
+
+  // ── Debounced auto-save ─────────────────────────────────────────────────
   const saveToFirestore = useCallback(async (data, name) => {
     if (!name) return
     setSaveStatus('saving')
+    skipSnapshotRef.current = true
     try {
       await setDoc(doc(db, 'ae-plans', name), {
         ...data,
@@ -66,6 +106,7 @@ export default function App() {
       setTimeout(() => setSaveStatus('idle'), 2500)
     } catch (err) {
       console.error('Save error:', err)
+      skipSnapshotRef.current = false
       setSaveStatus('error')
       setTimeout(() => setSaveStatus('idle'), 4000)
     }
@@ -76,48 +117,32 @@ export default function App() {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(() => {
       saveToFirestore(formData, aeName)
-    }, 900)
+    }, 500)
     return () => clearTimeout(saveTimerRef.current)
   }, [formData, nameSubmitted, aeName, saveToFirestore])
 
-  const handleNameSubmit = async () => {
-    const trimmed = aeName.trim()
-    if (!trimmed) return
-    setLoadingName(true)
-    try {
-      const docRef = doc(db, 'ae-plans', trimmed)
-      const docSnap = await getDoc(docRef)
-      if (docSnap.exists()) {
-        const { name: _n, lastUpdated: _l, ...rest } = docSnap.data()
-        setFormData(deepMerge(initialData, rest))
-      }
-    } catch (err) {
-      console.error('Load error:', err)
+  // ── Save immediately on page unload ────────────────────────────────────
+  useEffect(() => {
+    if (!nameSubmitted || !aeName) return
+    const handleUnload = () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+      // Best-effort synchronous save via sendBeacon isn't possible with Firestore,
+      // so flush the pending save immediately
+      saveToFirestore(formDataRef.current, aeName)
     }
-    setLoadingName(false)
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [nameSubmitted, aeName, saveToFirestore])
+
+  const handleNameSubmit = async (name) => {
     setNameSubmitted(true)
-  }
-
-  const fetchAllAEs = async () => {
-    setManagerLoading(true)
-    try {
-      const snapshot = await getDocs(collection(db, 'ae-plans'))
-      const data = snapshot.docs.map(d => d.data())
-      setAllAEs(data.sort((a, b) => (a.name || '').localeCompare(b.name || '')))
-    } catch (err) {
-      console.error('Fetch error:', err)
-    }
-    setManagerLoading(false)
-  }
-
-  const handleManagerView = () => {
-    fetchAllAEs()
-    setView('manager')
+    // onSnapshot will load existing data automatically once listener is set up
+    void name
   }
 
   return (
     <div className="app">
-      <header className="header">
+      <header className={`header${view === 'presenter' ? ' header-hidden-print' : ''}`}>
         <div className="header-inner">
           <div className="header-brand">
             <div className="header-logo">Y</div>
@@ -130,29 +155,40 @@ export default function App() {
             {saveStatus === 'saving' && <span className="save-status saving">Saving…</span>}
             {saveStatus === 'saved' && <span className="save-status saved">Saved</span>}
             {saveStatus === 'error' && <span className="save-status error">Save failed</span>}
-            <button
-              className="btn btn-outline btn-sm"
-              onClick={view === 'manager' ? () => setView('ae') : handleManagerView}
-            >
-              {view === 'manager' ? '← AE View' : 'Manager View'}
-            </button>
+            {view === 'presenter' ? (
+              <button className="btn btn-outline btn-sm" onClick={() => setView('ae')}>
+                Back to Editor
+              </button>
+            ) : view === 'manager' ? (
+              <button className="btn btn-outline btn-sm" onClick={() => setView('ae')}>
+                AE View
+              </button>
+            ) : (
+              <button className="btn btn-outline btn-sm" onClick={() => setView('manager')}>
+                Manager View
+              </button>
+            )}
           </div>
         </div>
       </header>
 
-      <main className="main">
-        {view === 'ae' ? (
+      <main className={view === 'presenter' ? 'main-presenter' : 'main'}>
+        {view === 'ae' && (
           <AEView
             aeName={aeName}
             setAeName={setAeName}
             nameSubmitted={nameSubmitted}
-            loadingName={loadingName}
             onNameSubmit={handleNameSubmit}
             formData={formData}
             setFormData={setFormData}
+            onPresent={() => setView('presenter')}
           />
-        ) : (
-          <ManagerView allAEs={allAEs} loading={managerLoading} onRefresh={fetchAllAEs} />
+        )}
+        {view === 'manager' && (
+          <ManagerView allAEs={allAEs} loading={managerLoading} />
+        )}
+        {view === 'presenter' && (
+          <PresenterView aeName={aeName} formData={formData} onBack={() => setView('ae')} />
         )}
       </main>
     </div>

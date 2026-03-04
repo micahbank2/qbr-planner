@@ -6,13 +6,13 @@ import Section3 from './Section3'
 import Section4 from './Section4'
 
 const SECTIONS = [
-  { num: '01', label: 'Pipeline & Growth', shortLabel: 'Pipeline' },
-  { num: '02', label: 'Your Story', shortLabel: 'Story' },
-  { num: '03', label: 'Big Bets', shortLabel: 'Big Bets' },
-  { num: '04', label: 'Big Asks', shortLabel: 'Asks' }
+  { num: '01', label: 'Pipeline & Growth' },
+  { num: '02', label: 'Your Story' },
+  { num: '03', label: 'Big Bets' },
+  { num: '04', label: 'Big Asks' }
 ]
 
-function NameEntry({ aeName, setAeName, onSubmit, loading }) {
+function NameEntry({ aeName, setAeName, onSubmit }) {
   const handleKey = e => { if (e.key === 'Enter') onSubmit() }
 
   return (
@@ -36,14 +36,10 @@ function NameEntry({ aeName, setAeName, onSubmit, loading }) {
           <button
             className="btn btn-primary btn-lg"
             onClick={onSubmit}
-            disabled={!aeName.trim() || loading}
+            disabled={!aeName.trim()}
             style={{ width: '100%' }}
           >
-            {loading ? (
-              <><span className="spinner" /> Loading…</>
-            ) : (
-              'Start My Plan'
-            )}
+            Start My Plan
           </button>
         </div>
         <p style={{ marginTop: 20, fontSize: 12, color: 'var(--text-3)', marginBottom: 0 }}>
@@ -54,7 +50,7 @@ function NameEntry({ aeName, setAeName, onSubmit, loading }) {
   )
 }
 
-export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, onNameSubmit, formData, setFormData }) {
+export default function AEView({ aeName, setAeName, nameSubmitted, onNameSubmit, formData, setFormData, onPresent }) {
   const [activeSection, setActiveSection] = useState(0)
 
   if (!nameSubmitted) {
@@ -62,8 +58,7 @@ export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, 
       <NameEntry
         aeName={aeName}
         setAeName={setAeName}
-        onSubmit={onNameSubmit}
-        loading={loadingName}
+        onSubmit={() => onNameSubmit(aeName.trim())}
       />
     )
   }
@@ -113,6 +108,9 @@ export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, 
           <div style={{ fontSize: 11, color: 'var(--text-3)' }}>H1 FY27 Plan · Auto-saving</div>
         </div>
         <div style={{ flex: 1 }} />
+        <button className="btn btn-outline btn-sm" onClick={onPresent}>
+          Present
+        </button>
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => window.location.reload()}
@@ -139,30 +137,17 @@ export default function AEView({ aeName, setAeName, nameSubmitted, loadingName, 
         ))}
       </div>
 
-      {/* Section Content */}
       {activeSection === 0 && (
-        <Section1
-          data={formData.section1}
-          onChange={d => updateSection('section1', d)}
-        />
+        <Section1 data={formData.section1} onChange={d => updateSection('section1', d)} />
       )}
       {activeSection === 1 && (
-        <Section2
-          data={formData.section2}
-          onChange={d => updateSection('section2', d)}
-        />
+        <Section2 data={formData.section2} onChange={d => updateSection('section2', d)} />
       )}
       {activeSection === 2 && (
-        <Section3
-          data={formData.section3}
-          onChange={d => updateSection('section3', d)}
-        />
+        <Section3 data={formData.section3} onChange={d => updateSection('section3', d)} />
       )}
       {activeSection === 3 && (
-        <Section4
-          data={formData.section4}
-          onChange={d => updateSection('section4', d)}
-        />
+        <Section4 data={formData.section4} onChange={d => updateSection('section4', d)} />
       )}
 
       {/* Section navigation footer */}

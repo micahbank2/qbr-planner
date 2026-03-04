@@ -165,7 +165,7 @@ function AEDetail({ ae }) {
   )
 }
 
-export default function ManagerView({ allAEs, loading, onRefresh }) {
+export default function ManagerView({ allAEs, loading }) {
   const [selectedIdx, setSelectedIdx] = useState(0)
 
   if (loading) {
@@ -186,7 +186,6 @@ export default function ManagerView({ allAEs, loading, onRefresh }) {
             <h2>Manager View</h2>
             <p>All submitted AE plans will appear here.</p>
           </div>
-          <button className="btn btn-outline" onClick={onRefresh}>Refresh</button>
         </div>
         <div className="empty-state">
           <h3>No plans submitted yet</h3>
@@ -203,9 +202,8 @@ export default function ManagerView({ allAEs, loading, onRefresh }) {
       <div className="manager-header">
         <div>
           <h2>Manager View</h2>
-          <p>{allAEs.length} AE plan{allAEs.length !== 1 ? 's' : ''} submitted</p>
+          <p>{allAEs.length} AE plan{allAEs.length !== 1 ? 's' : ''} · Live</p>
         </div>
-        <button className="btn btn-outline" onClick={onRefresh}>Refresh</button>
       </div>
 
       <div className="manager-layout">
